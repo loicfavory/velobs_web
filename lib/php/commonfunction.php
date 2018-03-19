@@ -9,6 +9,9 @@
 	function getTranslation($language,$value) {
 		switch (SGBD) {
 			case 'mysql':
+				$link = mysql_connect(HOST,DB_USER,DB_PASS);
+				mysql_select_db(DB_NAME);
+				mysql_query("SET NAMES utf8mb4");
 				$sql = "SELECT lib_translation FROM translation WHERE language_id_language = ".$language." AND code_translation = '".$value."'";
 				$result = mysql_query($sql);
 				return mysql_result($result, 0);
@@ -478,7 +481,7 @@
 				if ($OldValue != $NewValue){
 					$columnUpdated = 1;
 					if ($arrayColumns[$i]['dataType'] == 'position'){
-						if ($positionAlreadyMoidified != 1){
+						if (!isset($positionAlreadyMoidified) || $positionAlreadyMoidified != 1){
 							//les latitude et longitude stockés sous forme d'un point par POI, et non pas comme 2 champs distincts
 							$sqlUpdate .= ", geom_poi = GeomFromText('POINT(".$_POST['longitude_poi']." ".$_POST['latitude_poi'].")')";
 							$positionAlreadyMoidified = 1;
